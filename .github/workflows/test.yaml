@@ -11,6 +11,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker build --tag ghcr.io/ryotaroseto/ci-app:${{ github.sha }} .
+
+      - name: Run Trivy configuration scan
+        uses: aquasecurity/trivy-action@0.16.1
+        with:
+          scan-type: 'config'
+          format: 'github'
+          exit-code: '1'
+          ignore-unfixed: true
+          image-ref: 'ghcr.io/ryotaroseto/ci-app:${{ github.sha }}'
+          output: 'gl-code-quality-report.json'
+          severity: 'HIGH,CRITICAL'
+
       - name: Setup Golang
         uses: actions/setup-go@v5
         with:
