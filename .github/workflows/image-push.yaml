@@ -17,6 +17,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+        env:
+          GO111MODULE: on
+
+      - name: Go mod download
+        run: go mod download
+
+      - name: Test
+        run: go test -v ./...
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
