@@ -41,7 +41,6 @@ jobs:
         run: |
           docker build --tag ghcr.io/ryotaroseto/ci-app:latest \
           --tag ghcr.io/ryotaroseto/ci-app:$(echo $GITHUB_SHA | head -c7) \
-          --tag ghcr.io/ryotaroseto/ci-app:${GITHUB_REF/refs\/tags\//} \
           .
 
       - name: Run Trivy configuration scan
@@ -59,6 +58,3 @@ jobs:
         run: |
           docker push ghcr.io/ryotaroseto/ci-app:latest
           docker push ghcr.io/ryotaroseto/ci-app:$(echo $GITHUB_SHA | head -c7)
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            docker push ghcr.io/ryotaroseto/ci-app:${GITHUB_REF/refs\/tags\//}
-          fi
