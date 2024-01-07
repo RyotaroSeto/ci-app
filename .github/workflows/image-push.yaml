@@ -43,6 +43,17 @@ jobs:
           --tag ghcr.io/ryotaroseto/ci-app:$(echo $GITHUB_SHA | head -c7) \
           .
 
+      - name: Run Trivy configuration scan
+        uses: aquasecurity/trivy-action@0.16.1
+        with:
+          scan-type: 'config'
+          format: 'github'
+          exit-code: '1'
+          ignore-unfixed: true
+          image-ref: 'ghcr.io/ryotaroseto/ci-app:$(echo $GITHUB_SHA | head -c7)'
+          output: 'gl-code-quality-report.json'
+          severity: 'HIGH,CRITICAL'
+
       - name: Push Docker Image
         run: |
           docker push ghcr.io/ryotaroseto/ci-app:latest
